@@ -62,25 +62,19 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : PA11 PA12 PA8 PA9 
                            PA3 PA2 PA6 PA5 
-                           PA4 PA1 */
+                           PA0 PA4 PA1 */
   GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_8|GPIO_PIN_9 
                           |GPIO_PIN_3|GPIO_PIN_2|GPIO_PIN_6|GPIO_PIN_5 
-                          |GPIO_PIN_4|GPIO_PIN_1;
+                          |GPIO_PIN_0|GPIO_PIN_4|GPIO_PIN_1;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PC15 PC14 PC13 */
-  GPIO_InitStruct.Pin = GPIO_PIN_15|GPIO_PIN_14|GPIO_PIN_13;
+  /*Configure GPIO pin : PC13 */
+  GPIO_InitStruct.Pin = GPIO_PIN_13;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : PH1 PH0 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_0;
-  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
 
 }
 

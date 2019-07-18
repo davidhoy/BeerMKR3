@@ -118,8 +118,8 @@ void spi_flash_test(void)
         wcmd[3] = 0x00;
 
         HAL_GPIO_WritePin(Flash_SPI1_NSS_GPIO_Port, Flash_SPI1_NSS_Pin, GPIO_PIN_RESET);
-        res1 = HAL_SPI_Transmit_DMA(&hspi1, wcmd, sizeof(wcmd));
-        res2 = HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)wmsg, sizeof(wmsg));
+        res1 = HAL_SPI_Transmit(&hspi1, wcmd, sizeof(wcmd), HAL_MAX_DELAY);
+        res2 = HAL_SPI_Transmit(&hspi1, (uint8_t*)wmsg, sizeof(wmsg), HAL_MAX_DELAY);
         HAL_GPIO_WritePin(Flash_SPI1_NSS_GPIO_Port, Flash_SPI1_NSS_Pin, GPIO_PIN_SET);
 
         if((res1 != HAL_OK) || (res2 != HAL_OK)) {
@@ -138,10 +138,10 @@ void spi_flash_test(void)
         uint8_t status_cmd[1] = { 0xD7 };
         uint8_t status_res[2];
         HAL_GPIO_WritePin(Flash_SPI1_NSS_GPIO_Port, Flash_SPI1_NSS_Pin, GPIO_PIN_RESET);
-        HAL_SPI_Transmit_DMA(&hspi1, status_cmd, sizeof(status_cmd));
+        HAL_SPI_Transmit(&hspi1, status_cmd, sizeof(status_cmd), HAL_MAX_DELAY);
         do {
             cnt++;
-            res1 = HAL_SPI_Receive_DMA(&hspi1, status_res, sizeof(status_res));
+            res1 = HAL_SPI_Receive(&hspi1, status_res, sizeof(status_res), HAL_MAX_DELAY);
             if(res1 != HAL_OK)
                 break;
         } while (! (status_res[0] & 0x80)); // check RDY flag
@@ -286,10 +286,14 @@ void SystemClock_Config(void)
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
   /** Initializes the CPU, AHB and APB busses clocks 
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 13;
+  RCC_OscInitStruct.PLL.PLLN = 100;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = 4;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -298,12 +302,12 @@ void SystemClock_Config(void)
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
   {
     Error_Handler();
   }
